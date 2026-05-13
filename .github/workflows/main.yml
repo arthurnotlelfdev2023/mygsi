@@ -97,13 +97,16 @@ jobs:
           echo "Compression step done. Checking files..."
           ls -lh
 
-      - name: Upload GSI Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload to Draft Release
+        uses: softprops/action-gh-release@v2
         if: always()
         with:
-          name: GSI-${{ inputs.rom_type }}-Build
-          # 3. Wildcard matches .img (raw) OR .img.xz (compressed)
-          path: |
+          tag_name: draft-${{ github.run_number }}
+          name: Draft Build #${{ github.run_number }}
+          draft: true
+          files: |
             Output/*.img*
             Output/*.txt
             Output/*.log
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
