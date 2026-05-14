@@ -94,8 +94,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: "Output/*.img*;Output/*.txt;Output/*.log"
-          branches: "*"
+          file: "Output/*.img*"
           prerelease: true
           default_release_name: "GSI Build #${{ github.run_number }}"
           overwrite: true
