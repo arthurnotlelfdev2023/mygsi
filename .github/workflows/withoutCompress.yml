@@ -1,4 +1,4 @@
-name: Link to GSI Generator without safedisk
+name: Link to GSI Generator no compress
 
 on:
   workflow_dispatch:
