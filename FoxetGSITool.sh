@@ -50,6 +50,9 @@ mkdir -p "$BASE_DIR"
 echo "Copying to temp directory"
 cp -r "$INPUT_DIR/." "$BASE_DIR/"
 
+echo "===== BASE STRUCTURE ====="
+find "$BASE_DIR" -maxdepth 2 | sort
+
 SDK_VERSION=$(grep -m1 "ro.build.version.sdk" "$BASE_DIR/system/build.prop" | cut -d '=' -f2 | tr -dc '0-9')
 
 if [ -z "$SDK_VERSION" ] || ! [[ "$SDK_VERSION" =~ ^[0-9]+$ ]]; then
