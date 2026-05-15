@@ -4,23 +4,11 @@ BASE_DIR=$1
 SCRIPT_DIR=$(dirname "$0")
 TEMP_DIR="$SCRIPT_DIR/../../Temp"
 
-if [ -d "$BASE_DIR/product" ] && [ ! -L "$BASE_DIR/product" ]; then
-    product="$BASE_DIR/product"
-elif [ -d "$BASE_DIR/system/product" ] && [ ! -L "$BASE_DIR/system/product" ]; then
-    product="$BASE_DIR/system/product"
-else
-    echo "error: No product dir"
-    exit 1
-fi
+product="$BASE_DIR/system/product"
+system_ext="$BASE_DIR/system/system_ext"
 
-if [ -d "$BASE_DIR/system_ext" ] && [ ! -L "$BASE_DIR/system_ext" ]; then
-    system_ext="$BASE_DIR/system_ext"
-elif [ -d "$BASE_DIR/system/system_ext" ] && [ ! -L "$BASE_DIR/system/system_ext" ]; then
-    system_ext="$BASE_DIR/system/system_ext"
-else
-    echo "error: No system_ext dir"
-    exit 1
-fi
+mkdir -p "$product"
+mkdir -p "$system_ext"
 
 rsync -ra "$SCRIPT_DIR/system/" "$BASE_DIR/system/"
 rsync -ra "$SCRIPT_DIR/system_ext/" "$system_ext/"
@@ -34,35 +22,28 @@ sed -i "/ro.arch/d" $BASE_DIR/system/build.prop
 sed -i "/persist.sys.usb.config/d" $BASE_DIR/system/build.prop
 sed -i "/ro.actionable_compatible_property.enabled/d" $BASE_DIR/system/build.prop
 sed -i "/ro.setupwizard.mode/d" $BASE_DIR/system/build.prop
-sed -i "/ro.setupwizard.mode/d" $product/etc/build.prop
-sed -i "/ro.product.ab_ota_partitions/d" $product/etc/build.prop
+if [ -f "$product/etc/build.prop" ]; then
+    sed -i "/ro.setupwizard.mode/d" "$product/etc/build.prop"
+    sed -i "/ro.product.ab_ota_partitions/d" "$product/etc/build.prop"
+    cat "$SCRIPT_DIR/product_build.prop" >> "$product/etc/build.prop"
+fi
 
 cat $SCRIPT_DIR/system_build.prop >> $BASE_DIR/system/build.prop
 cat $SCRIPT_DIR/product_build.prop >> $product/etc/build.prop
 cat $SCRIPT_DIR/file_contexts >> $BASE_DIR/system/etc/selinux/plat_file_contexts
 
-rm -rf $BASE_DIR/system/lib64/libdolphin.so
-rm -rf $system_ext/lib64/libdolphin.so
 
 rm -rf $system_ext/etc/permissions/qti_permissions.xml
 rm -rf $system_ext/etc/permissions/com.qti.dpmframework.xml
-rm -rf $system_ext/app/QCC
-rm -rf $system_ext/app/QColor
+
 rm -rf $system_ext/app/QesdkSysService
 rm -rf $system_ext/priv-app/com.qualcomm.qti.services.systemhelper
 rm -rf $system_ext/priv-app/com.qualcomm.location
-rm -rf $system_ext/priv-app/qcrilmsgtunnel
+
 rm -rf $system_ext/priv-app/QtiWifiService
 rm -rf $system_ext/priv-app/dpmserviceapp
 
-if [ -f "$BASE_DIR/system/lib64/libbluetooth_qti.so" ]; then
-    echo "ro.bluetooth.library_name=libbluetooth_qti.so" >> "$BASE_DIR/system/build.prop"
-fi
-if [ -f "$system_ext/lib64/libbluetooth_qti.so" ]; then
-    echo "ro.bluetooth.library_name=libbluetooth_qti.so" >> "$system_ext/etc/build.prop"
-fi
 
-rm -rf $BASE_DIR/system/priv-app/DiracAudioControlService
 rm -rf $BASE_DIR/system/app/DiracManager
 
 $SCRIPT_DIR/../../Tools/sepolicy/sepolicy_prop_remover.sh $BASE_DIR/system/etc/selinux/plat_property_contexts "device/qcom/sepolicy" > $TEMP_DIR/plat_property_contexts
@@ -86,15 +67,15 @@ sed -i "/ro.opengles.version/d" $plat_property
 sed -i "/ro.product.ab_ota_partitions/d" $plat_property
 sed -i "/ro.vendor.build.ab_ota_partitions/d" $plat_property
 
-system_ext_plat_property=$system_ext/etc/selinux/system_ext_property_contexts
-sed -i "/persist.vendor.camera/d" $system_ext_plat_property
-sed -i "/ro.vendor.camera/d" $system_ext_plat_property
-sed -i "/vendor.camera/d" $system_ext_plat_property
-
-sed -i "/persist.vendor.camera/d" $system_ext/etc/selinux/system_ext_sepolicy.cil
+if [ -f "$system_ext/etc/selinux/system_ext_property_contexts" ]; then
+    sed -i "/persist.vendor.camera/d" "$system_ext/etc/selinux/system_ext_property_contexts"
+    sed -i "/ro.vendor.camera/d" "$system_ext/etc/selinux/system_ext_property_contexts"
+    sed -i "/vendor.camera/d" "$system_ext/etc/selinux/system_ext_property_contexts"
+    sed -i "/persist.vendor.camera/d" $system_ext/etc/selinux/system_ext_sepolicy.cil
 sed -i "/ro.vendor.camera/d" $system_ext/etc/selinux/system_ext_sepolicy.cil
 sed -i "/vendor.camera/d" $system_ext/etc/selinux/system_ext_sepolicy.cil
 sed -i "/genfscon/d" $system_ext/etc/selinux/system_ext_sepolicy.cil
+fi
 
 rm -rf $system_ext/etc/selinux/mapping/*
 rm -rf $product/etc/selinux/mapping/*
