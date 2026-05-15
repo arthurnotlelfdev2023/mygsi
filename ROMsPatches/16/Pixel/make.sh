@@ -49,12 +49,15 @@ rm -rf $product/priv-app/ConnMO
 rm -rf $product/priv-app/DCMO
 rm -rf $product/priv-app/SprintDM
 rm -rf $product/priv-app/SprintHM
+rm -rf $product/priv-app/EuiccSupportPixel
+rm -rf $product/priv-app/EuiccGoogle
 rm -rf $product/priv-app/WfcActivation
 rm -rf $product/priv-app/AmbientSensePrebuilt
 rm -rf $product/priv-app/GoogleCamera
 rm -rf $product/priv-app/CarrierServices
 rm -rf $system_ext/priv-app/GoogleFeedback
 rm -rf $system_ext/priv-app/PixelNfc
+rm -rf $BASE_DIR/system/app/NfcNci
 rm -rf $system_ext/priv-app/YadaYada
 rm -rf $BASE_DIR/system/priv-app/TagGoogle
 rm -rf $product/app/VZWAPNLib
@@ -65,16 +68,22 @@ rm -rf $product/priv-app/DreamlinerPrebuilt*
 rm -rf $product/priv-app/DreamlinerUpdater
 rm -rf $system_ext/priv-app/HbmSVManager
 rm -rf $product/overlay/PixelDocumentsUIOverlay
+rm -rf $product/priv-app/Velvet
 rm -rf $product/priv-app/RecorderPrebuilt*
 rm -rf $product/app/arcore-1.42
 rm -rf $product/app/talkback
 rm -rf $product/priv-app/GoogleRestorePrebuilt*
 rm -rf $product/priv-app/AdaptiveVPNPrebuilt*
 rm -rf $product/priv-app/AndroidAutoStubPrebuilt
+rm -rf $product/priv-app/PrebuiltDeskClockGoogle*
 rm -rf $product/priv-app/PixelSupportPrebuilt
 rm -rf $product/priv-app/PixelSupportPrebuilt
+rm -rf $product/priv-app/WeatherPixelPrebuilt*
 rm -rf $product/app/WallpaperEmojiPrebuilt*
 rm -rf $product/app/WallpaperAIPrebuilt*
 
 # Hotword
 rm -rf $product/priv-app/HotwordEnrollment*
+rm -rf $system_ext/framework/com.android.hotwordenrollment*
+rm -rf $system_ext/framework/oat/arm/com.android.hotwordenrollment*
+rm -rf $system_ext/framework/oat/arm64/com.android.hotwordenrollment*
