@@ -19,7 +19,7 @@ usage() {
 supported_roms() {
     echo "Available ROMs:"
     echo ""
-    declare -a versions=(12 12.1 13 14 15 17 16)
+    declare -a versions=(12 12.1 13 14 15 16 17)
     for version in "${versions[@]}"; do
         rom_dir="ROMsPatches/$version"
         if [ -d "$rom_dir" ]; then
@@ -76,11 +76,11 @@ case "$SDK_VERSION" in
   35)
     android_version="15"
     ;;
-  37)
-    android_version="17"
-    ;;  
   36)
     android_version="16"
+    ;;  
+  37)
+    android_version="17"
     ;;
   *)
     echo "Error: Unsupported SDK version $SDK_VERSION"
@@ -110,9 +110,14 @@ Patches/common/make.sh "$BASE_DIR"
 ROMsPatches/$android_version/$ROM_TYPE/make.sh "$BASE_DIR"
 tar -xf "Patches/apex/$android_version.tar.xz" -C "$BASE_DIR/system/apex"
 
-if [ -n "$(ls -A "$BASE_DIR/vendor" 2>/dev/null)" ]; then
-  Tools/vendoroverlay/addvo.sh "$BASE_DIR"
-  rm -rf "$BASE_DIR/vendor/"*
+echo "Copy Vendor Overlay..."
+if [ -d "$BASE_DIR/vendor" ] && [ "$(find "$BASE_DIR/vendor" -mindepth 1 | head -n 1)" ]; then
+    echo "Vendor files detected"
+    
+    bash Tools/vendoroverlay/addvo.sh "$BASE_DIR"
+
+    echo "Cleaning vendor partition"
+    rm -rf "$BASE_DIR/vendor/"*
 fi
 
 if [[ $(grep "ro.build.display.id" "$BASE_DIR/system/build.prop") ]]; then
@@ -124,7 +129,7 @@ elif [[ $(grep "ro.build.id" "$BASE_DIR/system/build.prop") ]]; then
 fi
 displayid2=$(echo "$displayid" | sed 's/\./\\./g')
 bdisplay=$(grep "$displayid" "$BASE_DIR/system/build.prop" | sed 's/\./\\./g; s:/:\\/:g; s/\,/\\,/g; s/\ /\\ /g')
-sed -i "s/$bdisplay/$displayid2=Builded\.by\.defnotegor\.Using\.FoxetGSITool/" "$BASE_DIR/system/build.prop"
+sed -i "s/$bdisplay/$displayid2=Port\.by\.RofikKernel\.Dev/" "$BASE_DIR/system/build.prop"
 
 current_date=$(date +"%Y-%m-%d")
 
@@ -132,7 +137,7 @@ current_date=$(date +"%Y-%m-%d")
 #find "$BASE_DIR" -maxdepth 3 | sort
 
 echo "Create $ROM_TYPE-AB-$android_version-$current_date.img"
-rm -rf "Output"
+#rm -rf "Output"
 mkdir -p "Output"
 Tools/mkimage/mkimage.sh "$BASE_DIR" "Output/system.img"
 
@@ -147,3 +152,4 @@ zip -r9 "${FINAL_NAME}.zip" "system.img"
 echo "Done:"
 ls -lh "${FINAL_NAME}.zip"
 sudo chown -R $USER:$USER .
+sudo chown -R $USER:$USER ../.

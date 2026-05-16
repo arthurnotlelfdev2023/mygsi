@@ -111,47 +111,6 @@ for partition in $partitions; do
     fi
 done
 
-# Internalize dynamic partitions into system/system
-for partition in product system_ext; do
-
-    TARGET="UnpackedROMs/system/system/$partition"
-
-    # Replace symlink placeholder
-    if [ -L "$TARGET" ]; then
-
-        echo "Replacing symlinked $partition with real partition"
-
-        rm -f "$TARGET"
-
-        if [ -d "UnpackedROMs/$partition" ]; then
-            mv "UnpackedROMs/$partition" "$TARGET"
-        fi
-
-    # Missing inside system/system
-    elif [ ! -e "$TARGET" ] && \
-         [ -d "UnpackedROMs/$partition" ]; then
-
-        echo "Embedding standalone $partition into system/system"
-
-        mv "UnpackedROMs/$partition" "$TARGET"
-
-    else
-        echo "$partition already embedded in system/system"
-        rm -rf "UnpackedROMs/$partition"
-    fi
-done
-
-# Create PHH-style root symlinks
-echo "Creating root symlinks..."
-
-rm -rf UnpackedROMs/system/product
-rm -rf UnpackedROMs/system/system_ext
-
-ln -s /system/product \
-    UnpackedROMs/system/product
-
-ln -s /system/system_ext \
-    UnpackedROMs/system/system_ext
     
     
 echo "===== VERIFY ====="
