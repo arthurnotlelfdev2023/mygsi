@@ -13,8 +13,7 @@ fi
 partitions="vendor system system_ext product optics prism mi_ext my_bigball my_engineering my_manifest my_region my_carrier my_heytap my_product my_stock"
 
 if [[ -d "Tools/Firmware_extractor" ]]; then
-    git -C "Tools"/Firmware_extractor fetch origin
-    git -C "Tools"/Firmware_extractor reset --hard origin/master
+    echo "already..."
 else
     echo "Cloning Firmware_extractor..."
     git clone -q --recurse-submodules https://github.com/erfanoabdi/Firmware_extractor.git "Tools"/Firmware_extractor

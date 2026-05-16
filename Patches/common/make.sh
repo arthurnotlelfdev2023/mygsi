@@ -6,24 +6,22 @@ TEMP_DIR="$SCRIPT_DIR/../../Temp"
 
 product="$BASE_DIR/system/product"
 system_ext="$BASE_DIR/system/system_ext"
-SYSTEM_PROP="$BASE_DIR/system/build.prop"
 
-sed -i \
-'s/^ro.build.display.id=.*/ro.build.display.id=PortedByRofikKernel/' \
-"$SYSTEM_PROP"
-
-sed -i \
-'s/^ro.system.build.display.id=.*/ro.system.build.display.id=PortedByRofikKernel/' \
-"$SYSTEM_PROP"
-mkdir -p "$product"
-mkdir -p "$system_ext"
+#mkdir -p "$product"
+#mkdir -p "$system_ext"
 
 rsync -ra "$SCRIPT_DIR/system/" "$BASE_DIR/system/"
 rsync -ra "$SCRIPT_DIR/system_ext/" "$system_ext/"
 
+# =========================================================
+# ROFIKKERNEL DEBUG
+# =========================================================
+
+chmod 0755 "$BASE_DIR/system/bin/rofikkernel-debug.sh"
+    
 sed -i "/ro.secure/d" $BASE_DIR/system/build.prop
 sed -i "/ro.adb.secure/d" $BASE_DIR/system/build.prop
-sed -i "/ro.debuggable/d" $BASE_DIR/system/build.prop
+sed -i "/ro.debuggable/d" $BASE_DIR/s ystem/build.prop
 sed -i "/ro.force.debuggable/d" $BASE_DIR/system/build.prop
 sed -i "/media.settings.xml/d" $BASE_DIR/system/build.prop
 sed -i "/ro.arch/d" $BASE_DIR/system/build.prop

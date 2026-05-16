@@ -11,5 +11,5 @@ if [ ! -d "$product" ]; then
 fi
 
 rsync -ra "$SCRIPT_DIR/system/" "$BASE_DIR/system/"
-mkdir -p "$product/overlay"
-rsync -ra "$SCRIPT_DIR/overlay/" "$product/overlay/"
+#mkdir -p "$product/overlay"
+#rsync -ra "$SCRIPT_DIR/overlay/" "$product/overlay/"

@@ -1,0 +1,13 @@
+on post-fs-data
+    rm /data/rofik-logcat.txt
+    rm /data/rofik-dmesg.txt
+    rm /data/rofik-mounts.txt
+    rm /data/rofik-getprop.txt
+    start rofikkernel_debug
+
+service rofikkernel_debug /system/bin/sh /system/bin/rofikkernel-debug.sh
+    class main
+    user root
+    group root system
+    disabled
+    oneshot

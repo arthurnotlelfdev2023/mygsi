@@ -152,4 +152,5 @@ zip -r9 "${FINAL_NAME}.zip" "system.img"
 echo "Done:"
 ls -lh "${FINAL_NAME}.zip"
 sudo chown -R $USER:$USER .
+rm system.img
 sudo chown -R $USER:$USER ../.
