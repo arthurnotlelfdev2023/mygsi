@@ -156,4 +156,4 @@ ln -s /system/system_ext \
 echo "===== VERIFY ====="
 ls -l UnpackedROMs/system/system/
 
-#bash FoxetGSITool.sh "UnpackedROMs/system" "$ROM_TYPE"
+bash FoxetGSITool.sh "UnpackedROMs/system" "$ROM_TYPE"
