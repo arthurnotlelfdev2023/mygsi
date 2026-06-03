@@ -3,7 +3,6 @@
 INPUT_DIR=$1
 ROM_TYPE=$2
 BASE_DIR="Temp/system"
-REAL_VENDOR="UnpackedROMs/vendor"
 
 usage() {
   echo "Usage: $0 [base_directory] [rom_type]"
@@ -103,26 +102,15 @@ if [ ! -d "ROMsPatches/$android_version/$ROM_TYPE" ]; then
 fi
 
 
-echo "PHH layout already prepared by LinkToGSI"
-
 echo "Patching started..."
 Patches/$android_version/make.sh "$BASE_DIR"
 Patches/common/make.sh "$BASE_DIR"
 ROMsPatches/$android_version/$ROM_TYPE/make.sh "$BASE_DIR"
 sudo tar -xf "Patches/apex/$android_version.tar.xz" -C "$BASE_DIR/system/apex"
 
-echo "Copy Vendor Overlay..."
-
-
-if [ -d "$REAL_VENDOR" ] && \
-   [ "$(find "$REAL_VENDOR" -mindepth 1 | head -n 1)" ]; then
-
-    echo "Vendor files detected"
-
- sudo   bash Tools/vendoroverlay/addvo.sh "$BASE_DIR"
-
-else
-    echo "Vendor partition empty"
+if [ -n "$(ls -A "$BASE_DIR/vendor" 2>/dev/null)" ]; then
+  Tools/vendoroverlay/addvo.sh "$BASE_DIR"
+  rm -rf "$BASE_DIR/vendor/"*
 fi
 
 if [[ $(grep "ro.build.display.id" "$BASE_DIR/system/build.prop") ]]; then

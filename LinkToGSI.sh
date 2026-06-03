@@ -108,51 +108,31 @@ for partition in $partitions; do
     fi
 done
 
-# Internalize dynamic partitions into system/system
-for partition in product system_ext; do
+for partition in $partitions; do
+    if [ "$partition" != "system" ]; then
 
-    TARGET="UnpackedROMs/system/system/$partition"
+        if [ -d "UnpackedROMs/system/$partition" ] && \
+           [ ! -L "UnpackedROMs/system/$partition" ]; then
 
-    # Replace symlink placeholder
-    if [ -L "$TARGET" ]; then
+            source_dir="UnpackedROMs/system/$partition"
 
-        echo "Replacing symlinked $partition with real partition"
+        elif [ -d "UnpackedROMs/system/system/$partition" ] && \
+             [ ! -L "UnpackedROMs/system/system/$partition" ]; then
 
-       sudo rm -f "$TARGET"
+            source_dir="UnpackedROMs/system/system/$partition"
 
-        if [ -d "UnpackedROMs/$partition" ]; then
-         sudo   mv "UnpackedROMs/$partition" "$TARGET"
+        else
+            continue
         fi
 
-    # Missing inside system/system
-    elif [ ! -e "$TARGET" ] && \
-         [ -d "UnpackedROMs/$partition" ]; then
+        if [ -d "UnpackedROMs/$partition" ]; then
 
-        echo "Embedding standalone $partition into system/system"
+            echo "Moving $partition into root"
+            sudo mv "UnpackedROMs/$partition" "$source_dir/.."
 
-       sudo mv "UnpackedROMs/$partition" "$TARGET"
-
-    else
-        echo "$partition already embedded in system/system"
-       sudo rm -rf "UnpackedROMs/$partition"
+        fi
     fi
 done
-
-# Create PHH-style root symlinks
-echo "Creating root symlinks..."
-
-sudo rm -rf UnpackedROMs/system/product
-sudo rm -rf UnpackedROMs/system/system_ext
-
-sudo ln -s /system/product \
-    UnpackedROMs/system/product
-
-sudo ln -s /system/system_ext \
-    UnpackedROMs/system/system_ext
-    
-    
-echo "===== VERIFY ====="
-#ls -l UnpackedROMs/system/system/
 
 
 bash FoxetGSITool.sh "UnpackedROMs/system" "$ROM_TYPE"
