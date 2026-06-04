@@ -48,8 +48,15 @@ fi
 rm -rf "$BASE_DIR"
 mkdir -p "$BASE_DIR"
 echo "Copying to temp directory"
-cp -r "$INPUT_DIR/." "$BASE_DIR/"
+sudo cp -a "$INPUT_DIR/." "$BASE_DIR/"
+sudo chown -R $USER:$USER "$BASE_DIR"
+echo "===== CHECK ====="
 
+ls -l "$BASE_DIR"
+
+ls -l "$BASE_DIR/system" || true
+
+find "$BASE_DIR" -name build.prop | sort
 #echo "===== BASE STRUCTURE ====="
 #find "$BASE_DIR" -maxdepth 1 | sort
 
