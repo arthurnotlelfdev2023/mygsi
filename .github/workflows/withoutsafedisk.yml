@@ -1,4 +1,4 @@
-name: Link to GSI Generator no safedisk
+name: RofikKernelDev
 
 on:
   workflow_dispatch:
