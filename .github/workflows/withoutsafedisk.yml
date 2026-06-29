@@ -57,23 +57,22 @@ jobs:
         id: download
         run: |
          LINK="${{ steps.prep.outputs.url }}"
-         LINK="${{ steps.prep.outputs.url }}"
 
          if [[ "$LINK" == *"drive.google.com"* ]]; then
-          echo "Google Drive detected."
-          gdown --fuzzy "$LINK" -O firmware.zip
-          else
-          echo "Direct download detected."
-          wget --progress=bar:force:noscroll -O firmware.zip "$LINK"
-          fi
+         echo "Google Drive detected."
 
-          if [[ -s firmware.zip ]]; then
-          echo "Download Successful."
-          ls -lh firmware.zip
-          else
-          echo "Download Failed."
-          exit 1
-          fi
+         FILEID=$(echo "$LINK" | sed -n 's#.*file/d/\([^/]*\).*#\1#p')
+
+         if [[ -z "$FILEID" ]]; then
+         echo "Cannot parse Google Drive File ID!"
+         exit 1
+         fi
+
+         gdown "$FILEID" -O firmware.zip
+         else
+         echo "Direct download detected."
+         wget --progress=bar:force:noscroll -O firmware.zip "$LINK"
+         fi
       - name: Make all scripts executable
         run: |
           find . -type f -name "*.sh" -exec chmod +x {} \;
