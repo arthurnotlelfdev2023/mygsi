@@ -18,3 +18,4 @@ ro.setupwizard.mode=OPTIONAL
 ro.vndk.lite=false
 persist.sys.disable_rescue=true
 ro.control_privapp_permissions=disable
+vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.android.camera,net.sourceforge.opencamera,com.google.android.GoogleCameraEng
