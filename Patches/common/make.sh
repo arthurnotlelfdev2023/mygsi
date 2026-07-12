@@ -24,6 +24,7 @@ fi
 
 rsync -ra "$SCRIPT_DIR/system/" "$BASE_DIR/system/"
 rsync -ra "$SCRIPT_DIR/system_ext/" "$system_ext/"
+rsync -ra "$SCRIPT_DIR/product/" "$product/"
 
 sed -i "/ro.secure/d" $BASE_DIR/system/build.prop
 sed -i "/ro.adb.secure/d" $BASE_DIR/system/build.prop
