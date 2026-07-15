@@ -1,0 +1,99 @@
+name: RofikKernelDevImgOnly
+
+on:
+  workflow_dispatch:
+    inputs:
+      firmware_link:
+       description: Stock Firmware Link
+       required: true
+
+      partition:
+        description: Partition
+        required: true
+        type: choice
+        options:
+          - vendor
+          - system
+          - product
+          - system_ext
+          - odm
+          - vendor_dlkm
+          - system_dlkm
+          - odm_dlkm
+          - mi_ext
+          - optics
+          - prism
+
+jobs:
+  RofikKernelDev:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false # We handle this manually
+
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract rename liblzma-dev python3-pip brotli lz4 protobuf-compiler git gawk jq
+          
+      - name: Install Python Dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install protobuf==3.20.3 gdown
+          
+          
+      - name: Install Python Dependencies
+        run: |
+          python3 -m pip install backports.lzma bsdiff4 twrpdtgen extract-dtb pycryptodome
+      - name: Prepare and Clean URL
+        id: prep
+        run: |
+          LINK="${{ inputs.firmware_link }}"
+          if [[ "$LINK" == *"google.com/url"* ]]; then
+             LINK=$(echo "$LINK" | grep -oP 'q=\K[^&]*' | python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.stdin.read().strip()))")
+          fi
+          echo "url=$LINK" >> $GITHUB_OUTPUT
+
+      - name: Download Firmware
+        id: download
+        run: |
+         LINK="${{ steps.prep.outputs.url }}"
+
+         if [[ "$LINK" == *"drive.google.com"* ]]; then
+         echo "Google Drive detected."
+
+         FILEID=$(echo "$LINK" | sed -n 's#.*file/d/\([^/]*\).*#\1#p')
+
+         if [[ -z "$FILEID" ]]; then
+         echo "Cannot parse Google Drive File ID!"
+         exit 1
+         fi
+
+         gdown "$FILEID" -O firmware.zip
+         else
+         echo "Direct download detected."
+         wget --progress=bar:force:noscroll -O firmware.zip "$LINK"
+         fi
+      - name: Make all scripts executable
+        run: |
+          find . -type f -name "*.sh" -exec chmod +x {} \;
+          
+      - name: Run rofikkernel
+        run: |
+          chmod +x extractonly.sh
+          bash extractonly.sh "$(pwd)/firmware.zip" "${{ inputs.partition }}"
+
+      - name: rofikkerneloke
+        env:
+          GOFILE_API_KEY: ${{ secrets.GOFILE_API_KEY }}
+        run: |
+          sudo chown -R $USER:$USER .
+          FILE="${{ inputs.partition }}.zip"
+          bash uploadgofile.sh "$FILE"
+        
+          
