@@ -45,6 +45,7 @@ else
 
     ROM_FILE="DownloadedROMs/rom.zip"
 
+fi
 # Extract firmware
 Tools/Firmware_extractor/extractor.sh "$ROM_FILE" "UnpackedROMs/"
 
