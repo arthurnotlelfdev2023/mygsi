@@ -86,7 +86,7 @@ jobs:
       - name: Run rofikkernel
         run: |
           chmod +x extractimgonly.sh
-          bash extractonly.sh "$(pwd)/firmware.zip" "${{ inputs.partition }}"
+          bash extractimgonly.sh "$(pwd)/firmware.zip" "${{ inputs.partition }}"
 
       - name: rofikkerneloke
         env:
