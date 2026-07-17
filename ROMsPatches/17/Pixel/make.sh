@@ -21,6 +21,8 @@ else
     exit 1
 fi
 
+rm -rf com.google.android.gms
+
 sed -i "/dataservice_app/d" $product/etc/selinux/product_seapp_contexts
 sed -i "/dataservice_app/d" $system_ext/etc/selinux/system_ext_seapp_contexts
 
